@@ -97,6 +97,9 @@ module Fog
       request :add_server_access_config
       request :delete_server_access_config
 
+      request :update_firewall
+      request :update_http_health_check
+
       model_path 'fog/google/models/compute'
       model :server
       collection :servers

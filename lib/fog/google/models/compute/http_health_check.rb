@@ -40,6 +40,25 @@ module Fog
           merge_attributes(data)
         end
 
+        def update
+          requires :name
+
+          options = {
+            'description' => description,
+            'host' => host,
+            'requestPath' => request_path || "/",
+            'port' => port || 80,
+            'checkIntervalSec' => check_interval_sec || 5,
+            'timeoutSec' => timeout_sec || 5,
+            'unhealthyThreshold' => unhealthy_threshold || 2,
+            'healthyThreshold' => healthy_threshold || 2,
+          }
+
+          service.update_http_health_check(name, options).body
+          data = service.backoff_if_unfound {service.get_http_health_check(name).body}
+          merge_attributes(data)
+        end
+
         def destroy(async=true)
           requires :name
           operation = service.delete_http_health_check(name)

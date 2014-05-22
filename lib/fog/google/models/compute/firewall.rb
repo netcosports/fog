@@ -31,6 +31,22 @@ module Fog
           reload
         end
 
+        def update
+          requires :name
+
+          options = {
+            'allowed' => allowed,
+            'network' => network,
+            'sourceRanges' => source_ranges,
+            'sourceTags' => source_tags,
+            'targetTags' => target_tags,
+          }
+
+          service.update_firewall(name, options).body
+          data = service.backoff_if_unfound {service.get_firewall(name).body}
+          merge_attributes(data)
+        end
+
         def destroy(async=true)
           requires :identity
 
