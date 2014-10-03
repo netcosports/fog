@@ -3,7 +3,6 @@ require 'fog/compute/models/server'
 module Fog
   module Compute
     class AWS
-
       class Server < Fog::Compute::Server
         extend Fog::Deprecation
         deprecate :ip_address, :public_ip_address
@@ -22,14 +21,14 @@ module Fog
         attribute :ebs_optimized,            :aliases => 'ebsOptimized'
         attribute :groups
         attribute :flavor_id,                :aliases => 'instanceType'
-        attribute :hypervisor              
+        attribute :hypervisor
         attribute :iam_instance_profile,     :aliases => 'iamInstanceProfile'
         attribute :image_id,                 :aliases => 'imageId'
         attr_accessor :instance_initiated_shutdown_behavior
         attribute :kernel_id,                :aliases => 'kernelId'
         attribute :key_name,                 :aliases => 'keyName'
         attribute :created_at,               :aliases => 'launchTime'
-        attribute :lifecycle,                :aliases => 'instanceLifecycle' 
+        attribute :lifecycle,                :aliases => 'instanceLifecycle'
         attribute :monitoring,               :squash =>  'state'
         attribute :placement_group,          :aliases => 'groupName'
         attribute :platform,                 :aliases => 'platform'
@@ -56,7 +55,6 @@ module Fog
 
         attr_accessor                        :password
         attr_writer                          :iam_instance_profile_name, :iam_instance_profile_arn
-
 
         def initialize(attributes={})
           self.groups     ||= ["default"] unless (attributes[:subnet_id] || attributes[:security_group_ids] || attributes[:network_interfaces])
@@ -118,13 +116,12 @@ module Fog
         end
 
         def flavor
-          @flavor ||= service.flavors.all.detect {|flavor| flavor.id == flavor_id}
+          @flavor ||= service.flavors.all.find {|flavor| flavor.id == flavor_id}
         end
 
         def key_pair
           requires :key_name
-
-          service.key_pairs.all(key_name).first
+          service.key_pairs.all({'key-name' => key_name}).first
         end
 
         def key_pair=(new_keypair)
@@ -141,7 +138,7 @@ module Fog
           true
         end
 
-        def save
+        def run_instance_options
           raise Fog::Errors::Error.new('Resaving an existing object may create a duplicate') if persisted?
           requires :image_id
 
@@ -188,7 +185,7 @@ module Fog
               else
                 options["NetworkInterface.0.SecurityGroupId.0"] = options['SecurityGroupId']
               end
-              options.delete('SecurityGroupId')              
+              options.delete('SecurityGroupId')
               if private_ip_address
                 options.delete('PrivateIpAddress')
                 options['NetworkInterface.0.PrivateIpAddress'] = private_ip_address
@@ -197,22 +194,12 @@ module Fog
           else
             options.delete('SubnetId')
           end
+          options
+        end
 
-          data = service.run_instances(image_id, 1, 1, options)
-          merge_attributes(data.body['instancesSet'].first)
-
-          if tags = self.tags
-            # expect eventual consistency
-            Fog.wait_for { self.reload rescue nil }
-            for key, value in (self.tags = tags)
-              service.tags.create(
-                :key          => key,
-                :resource_id  => self.identity,
-                :value        => value
-              )
-            end
-          end
-
+        def save
+          servers = service.servers.save_many(self, 1, 1)
+          merge_attributes(servers.first.attributes)
           true
         end
 
@@ -278,9 +265,7 @@ module Fog
             self.attributes[:placement] = new_placement
           end
         end
-
       end
-
     end
   end
 end

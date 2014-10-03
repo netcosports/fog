@@ -2,7 +2,6 @@ module Fog
   module Compute
     class AWS
       class Real
-
         require 'fog/aws/parsers/compute/create_vpc'
 
         # Creates a VPC with the CIDR block you specify.
@@ -34,7 +33,6 @@ module Fog
             'CidrBlock' => cidrBlock,
             :parser => Fog::Parsers::Compute::AWS::CreateVpc.new
           }.merge!(options))
-
         end
       end
 
@@ -51,7 +49,8 @@ module Fog
                 'dhcpOptionsId'      => Fog::AWS::Mock.request_id,
                 'tagSet'             => {},
                 'enableDnsSupport'   => true,
-                'enableDnsHostnames' => false
+                'enableDnsHostnames' => false,
+                'mapPublicIpOnLaunch'=> false
               }
               self.data[:vpcs].push(vpc)
 
