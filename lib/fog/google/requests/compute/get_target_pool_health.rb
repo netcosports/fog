@@ -19,7 +19,7 @@ module Fog
           health_results = target_pool.instances.collect do |instance|
             begin
               body = { 'instance' => instance }
-              resp = build_response(build_result(api_method, parameters, body_object=body))
+              resp = request(api_method, parameters, body_object=body)
               [instance, resp.data[:body]['healthStatus']]
             rescue
               [instance, [{'ipAddress' => '?', 'healthState' => 'NOT EXISTING'}]]
