@@ -577,7 +577,7 @@ module Fog
                     ],
                     "selfLink" => "https://www.googleapis.com/compute/#{api_version}/projects/#{key}/regions/us-central1",
                     "status" => "UP",
-                    "zones" =>  [ 
+                    "zones" =>  [
                       "https://www.googleapis.com/compute/#{api_version}/projects/#{key}/zones/us-central1-a",
                       "https://www.googleapis.com/compute/#{api_version}/projects/#{key}/zones/us-central1-b",
                       "https://www.googleapis.com/compute/#{api_version}/projects/#{key}/zones/us-central1-f",
@@ -598,7 +598,7 @@ module Fog
                     ],
                     "selfLink" => "https://www.googleapis.com/compute/#{api_version}/projects/#{key}/regions/erope-west1",
                     "status" => "UP",
-                    "zones" =>  [ 
+                    "zones" =>  [
                       "https://www.googleapis.com/compute/#{api_version}/projects/#{key}/zones/europe-west1-a",
                       "https://www.googleapis.com/compute/#{api_version}/projects/#{key}/zones/europe-west1-b",
                     ]
@@ -618,7 +618,7 @@ module Fog
                     ],
                     "selfLink" => "https://www.googleapis.com/compute/#{api_version}/projects/#{key}/regions/asia-east1",
                     "status" => "UP",
-                    "zones" =>  [ 
+                    "zones" =>  [
                       "https://www.googleapis.com/compute/#{api_version}/projects/#{key}/zones/asia-east1-a",
                       "https://www.googleapis.com/compute/#{api_version}/projects/#{key}/zones/asia-east1-b",
                       "https://www.googleapis.com/compute/#{api_version}/projects/#{key}/zones/asia-east1-c",
@@ -1060,7 +1060,7 @@ module Fog
 
           @client = initialize_google_client(options)
           @compute = @client.discovered_api('compute', api_version)
-          @resourceviews = @client.discovered_api('resourceviews', 'v1beta1')
+          # @resourceviews = @client.discovered_api('resourceviews', 'v1beta1')
         end
       end
 
